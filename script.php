@@ -101,30 +101,40 @@ class FileProcessor {
                     break;
                 }
             }
-
             $this->logMessage("Total JSON Items : " . $item_counter);
             fclose($file_handler);
-            $output_handler = fopen($destination_file_name, 'w');
-            $this->logMessage("JSON Header created", 'info');
-            fputcsv($output_handler, $this->column_defination);
-            $this->logMessage("JSON Data writing started", 'info');
-            foreach ($group_counts as $combination => $count) {
-                $product_deconstruct = explode("|", $combination);
-                $output_data = array_map(function ($columnName) use ($mapped_columns, $product_deconstruct) {
-                    return $product_deconstruct[$this->searchColumn($mapped_columns, $columnName)];
-                }, ["brand_name", "model_name", "condition_name", "grade_name", "gb_spec_name", "colour_name", "network_name"]);
-    
-                $output_data[] = $count;
-    
-                fputcsv($output_handler, $output_data);
-            }
-            $this->logMessage("JSON Data writing finished", 'info');
-            
-            fclose($output_handler);
+
+            $this->writeFile($destination_file_name, $this->column_defination, $group_counts, $mapped_columns, "JSON");
+
             $this->logMessage("Closing JSON file " . $filename, 'info');
             $this->logMessage("Output file name " . $destination_file_name, 'info');
         }
     }
+
+    // Updated save function
+    private function writeFile($filename, $columnDefination, $groupCounts, $mappedColumns, $file_type)
+    {
+        $outputHandler = fopen($filename, 'w');
+
+        $this->logMessage("$file_type Header created", 'info');
+        fputcsv($outputHandler, $columnDefination);
+        $this->logMessage("$file_type Data writing started", 'info');
+
+        foreach ($groupCounts as $combination => $count) {
+            $productDeconstruct = explode("|", $combination);
+            $outputData = array_map(function ($columnName) use ($mappedColumns, $productDeconstruct) {
+                return $productDeconstruct[$this->searchColumn($mappedColumns, $columnName)];
+            }, ["brand_name", "model_name", "condition_name", "grade_name", "gb_spec_name", "colour_name", "network_name"]);
+
+            $outputData[] = $count;
+
+            fputcsv($outputHandler, $outputData);
+        }
+
+        $this->logMessage("$file_type Data writing finished", 'info');
+        fclose($outputHandler);
+    }
+
 
     public function readTsvFile($filename = null, $destination_file_name = null) {
         if ($filename !== null) {
@@ -156,25 +166,9 @@ class FileProcessor {
             }
     
             fclose($file_handler);
-    
-            $output_handler = fopen($destination_file_name, 'w');
-            $this->logMessage("TSV Header created", 'info');
-            fputcsv($output_handler, $this->column_defination);
-    
-            $this->logMessage("TSV Data writing started", 'info');
-            foreach ($group_counts as $combination => $count) {
-                $product_deconstruct = explode("|", $combination);
-                $output_data = array_map(function ($columnName) use ($mapped_columns, $product_deconstruct) {
-                    return $product_deconstruct[$this->searchColumn($mapped_columns, $columnName)];
-                }, ["brand_name", "model_name", "condition_name", "grade_name", "gb_spec_name", "colour_name", "network_name"]);
-    
-                $output_data[] = $count;
-    
-                fputcsv($output_handler, $output_data);
-            }
-            $this->logMessage("TSV Data writing finished", 'info');
-            
-            fclose($output_handler);
+
+            $this->writeFile($destination_file_name, $this->column_defination, $group_counts, $mapped_columns, "TSV");
+
             $this->logMessage("Closing TSV file " . $filename, 'info');
             $this->logMessage("Output file name " . $destination_file_name, 'info');
         }
@@ -208,25 +202,9 @@ class FileProcessor {
             }
     
             fclose($file_handler);
-    
-            $output_handler = fopen($destination_file_name, 'w');
-            $this->logMessage("CSV Header created", 'info');
-            fputcsv($output_handler, $this->column_defination);
-    
-            $this->logMessage("CSV Data writing started", 'info');
-            foreach ($group_counts as $combination => $count) {
-                $product_deconstruct = explode("|", $combination);
-                $output_data = array_map(function ($columnName) use ($mapped_columns, $product_deconstruct) {
-                    return $product_deconstruct[$this->searchColumn($mapped_columns, $columnName)];
-                }, ["brand_name", "model_name", "condition_name", "grade_name", "gb_spec_name", "colour_name", "network_name"]);
-    
-                $output_data[] = $count;
-    
-                fputcsv($output_handler, $output_data);
-            }
-            $this->logMessage("CSV Data writing finished", 'info');
-            
-            fclose($output_handler);
+
+            $this->writeFile($destination_file_name, $this->column_defination, $group_counts, $mapped_columns, "CSV");
+
             $this->logMessage("Closing CSV file " . $filename, 'info');
             $this->logMessage("Output file name " . $destination_file_name, 'info');
         }
