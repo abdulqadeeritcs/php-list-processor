@@ -125,14 +125,14 @@ class FileProcessor {
 
         $this->logMessage("$file_type Data writing started", 'info');
 
+
         foreach ($groupCounts as $combination => $count) {
             $productDeconstruct = explode("|", $combination);
             $outputData = array_map(function ($columnName) use ($mappedColumns, $productDeconstruct) {
-                return $productDeconstruct[$this->searchColumn($mappedColumns, $columnName)];
+                return ($this->searchColumn($mappedColumns, $columnName) !== false) ? $productDeconstruct[$this->searchColumn($mappedColumns, $columnName)] : "";
             }, ["brand_name", "model_name", "condition_name", "grade_name", "gb_spec_name", "colour_name", "network_name"]);
 
             $outputData[] = $count;
-
             fputcsv($outputHandler, $outputData);
         }
 
