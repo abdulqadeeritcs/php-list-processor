@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @author Abdul Qadeer
+ * @author Abdul Qadeer <abdulqadeerit@gmail.com>
+ */
+
 class FileProcessor {
     
     public $column_defination = ["brand_name", "model_name", "condition_name", "grade_name", "gb_spec_name", "colour_name", "network_name", "count"];
@@ -62,10 +67,7 @@ class FileProcessor {
             $row = 1;
             $group_counts = [];
             $mapped_columns = [];
-    
-            
             $buffer = ''; // Initialize a buffer to store a chunk of data
-            $isInsideArray = false;
             $data = [];
             $item_counter = 0;
             while (($chunk = fread($file_handler, 4096)) !== false) {
@@ -101,6 +103,7 @@ class FileProcessor {
                     break;
                 }
             }
+
             $this->logMessage("Total JSON Items : " . $item_counter);
             fclose($file_handler);
 
@@ -117,7 +120,9 @@ class FileProcessor {
         $outputHandler = fopen($filename, 'w');
 
         $this->logMessage("$file_type Header created", 'info');
+
         fputcsv($outputHandler, $columnDefination);
+
         $this->logMessage("$file_type Data writing started", 'info');
 
         foreach ($groupCounts as $combination => $count) {
