@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once './scriptc.php';
+require_once './script.php';
 $te = new FileProcessor();
 
 class IdentifyFileFormatTest extends TestCase
